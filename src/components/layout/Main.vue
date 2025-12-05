@@ -198,7 +198,7 @@ onMounted(async () => {
                             </div>
                         </div>
                         <div class="flex gap-1">
-                            <a href="https://github.com/GabrielCSTR" target="_blank"
+                            <a href="https://github.com/gbrlstr" target="_blank"
                                 class="relative flex justify-center items-center text-gray-50 dark:text-gray-600 hover:bg-primary-gray-100 active:bg-primary-gray-200 dark:hover:bg-gray-100 dark:active:bg-gray-200 rounded-lg p-1.5 transition-colors duration-200 [&amp;_svg]:stroke-gray-600 [&amp;_svg]:hover:stroke-gray-700 [&amp;_svg]:w-6 [&amp;_svg]:h-6"><svg
                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"

@@ -1,5 +1,5 @@
 import axios from 'axios';
-const token = import.meta.env.VITE_GIT_TOKEN;
+// const token = import.meta.env.VITE_GIT_TOKEN;
 // const headers = {
 //     Authorization: `Bearer ${token}`
 // };

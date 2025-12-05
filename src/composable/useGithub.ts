@@ -7,7 +7,7 @@ const headers = {
 export function useGithub() {
     
     async function getProjects(){
-        return axios.get('https://api.github.com/users/gbrlstr/repos', { headers })
+        return axios.get('https://api.github.com/users/gbrlstr/repos')
             .then(res => res.data)
             .catch(err => {
                 console.log(err);
@@ -16,7 +16,7 @@ export function useGithub() {
     }
 
     async function getProjectTags(project: string){
-        return axios.get(`https://api.github.com/repos/gbrlstr/${project}/tags`, { headers })
+        return axios.get(`https://api.github.com/repos/gbrlstr/${project}/tags`)
             .then(res => res.data)
             .catch(err => {
                 console.log(err);
@@ -25,7 +25,7 @@ export function useGithub() {
     }
 
     async function getProjectLanguages(project: string){
-        return axios.get(`https://api.github.com/repos/gbrlstr/${project}/languages`, { headers })
+        return axios.get(`https://api.github.com/repos/gbrlstr/${project}/languages`)
             .then(res => res.data)
             .catch(err => {
                 console.log(err);
@@ -34,7 +34,7 @@ export function useGithub() {
     }
 
     async function getProjectDetails(project: string){
-        return axios.get(`https://api.github.com/repos/gbrlstr/${project}`, { headers })
+        return axios.get(`https://api.github.com/repos/gbrlstr/${project}`)
             .then(res => res.data)
             .catch(err => {
                 console.log(err);

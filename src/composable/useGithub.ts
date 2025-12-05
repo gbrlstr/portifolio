@@ -1,8 +1,8 @@
 import axios from 'axios';
 const token = import.meta.env.VITE_GIT_TOKEN;
-const headers = {
-    Authorization: `Bearer ${token}`
-};
+// const headers = {
+//     Authorization: `Bearer ${token}`
+// };
 
 export function useGithub() {
     

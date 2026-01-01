@@ -6,7 +6,7 @@ import { ISkill } from '@/types/index';
 import { useGithub } from '@/composable/useGithub';
 import ProjectCard from '@/components/ProjectCard.vue';
 import { useI18n } from '@/composable/useI18n';
-import ProjectCardV2 from "../ProjectCardV2.vue";
+// import ProjectCardV2 from "../ProjectCardV2.vue";
 
 const { getProjects } = useGithub();
 const { t } = useI18n();

@@ -14,16 +14,16 @@ onMounted(async () => {
     }
 });
 
-const getTagValue = (tag: string) => {
-  const tagMap: any = {
-    'C#': 'c%23',
-    'C++': 'C++',
-    'Objective-C': 'OBJECTIVE--C',
-    'C': 'C'
-  };
+// const getTagValue = (tag: string) => {
+//   const tagMap: any = {
+//     'C#': 'c%23',
+//     'C++': 'C++',
+//     'Objective-C': 'OBJECTIVE--C',
+//     'C': 'C'
+//   };
   
-  return tagMap[tag] || tag;
-};
+//   return tagMap[tag] || tag;
+// };
 
 </script>
 

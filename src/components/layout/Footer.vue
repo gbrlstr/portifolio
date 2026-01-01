@@ -1,18 +1,23 @@
 <script setup lang="ts">
+import { useI18n } from '@/composable/useI18n'
 
+const { t } = useI18n()
 </script>
 <template>
-    <footer class="w-full py-6 bg-primary-gray-300 dark:bg-gray">
-        <p class="flex text-primary-gray-900 dark:text-gray-500 justify-center sm:text-center text-normal text-sm items-center">
-            <svg
-                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                class="mr-1 inline-block h-4 w-4">
-                <circle cx="12" cy="12" r="10"></circle>
-                <path d="M15 9.354a4 4 0 1 0 0 5.292"></path>
-            </svg>
-            2024 |&nbsp;<a
-            target="_blank" class="underline underline-offset-4 transition-all hover:text-gray-900 active:text-gray-600"
-            href="#">coded</a>&nbsp;with ❤️️ by Gabriel Carlos</p>
+    <footer class="w-full py-8 bg-white dark:bg-gray-950 border-t border-primary-gray-200 dark:border-gray-800 animate-fade-in-up">
+        <div class="max-w-7xl mx-auto px-6">
+            <p class="flex flex-wrap items-center justify-center gap-2 text-sm text-primary-gray-600 dark:text-gray-400">
+                <span>© {{ new Date().getFullYear() }}</span>
+                <span class="hidden sm:inline">•</span>
+                <span>{{ t('footer.developed') }}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="text-red-500 animate-pulse-slow">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <span>{{ t('footer.by') }}</span>
+                <a href="#hero" class="font-medium text-primary-gray-900 dark:text-gray-50 hover:text-primary-gray-600 dark:hover:text-gray-300 transition-all hover:scale-110 inline-block">
+                    Gabriel Carlos
+                </a>
+            </p>
+        </div>
     </footer>
 </template>

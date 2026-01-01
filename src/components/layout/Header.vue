@@ -1,87 +1,179 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-const isScrolledToTop = ref()
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useI18n } from '@/composable/useI18n'
+import { useTheme } from '@/composable/useTheme'
+
+const { t, currentLanguage, setLanguage } = useI18n()
+const { currentTheme, toggleTheme, initTheme } = useTheme()
+
+const isScrolledToTop = ref(true)
+const showLanguageMenu = ref(false)
+
 onMounted(() => {
     isScrolledToTop.value = true;
     window.addEventListener('scroll', handleScroll);
+    document.addEventListener('click', handleClickOutside);
+    initTheme();
+    updateThemeIcons();
 })
+
 onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll);
+    document.removeEventListener('click', handleClickOutside);
 })
-const handleScroll =() => {
+
+const handleClickOutside = (event: MouseEvent) => {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.language-menu-container')) {
+        showLanguageMenu.value = false;
+    }
+}
+
+const handleScroll = () => {
     isScrolledToTop.value = window.scrollY === 0;
 }
+
+const updateThemeIcons = () => {
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    
+    if (currentTheme.value === 'dark') {
+        themeToggleLightIcon?.classList.remove('hidden');
+        themeToggleDarkIcon?.classList.add('hidden');
+    } else {
+        themeToggleDarkIcon?.classList.remove('hidden');
+        themeToggleLightIcon?.classList.add('hidden');
+    }
+}
+
+const handleThemeToggle = () => {
+    toggleTheme();
+    setTimeout(updateThemeIcons, 50);
+}
+
+const handleLanguageChange = (lang: 'pt' | 'en') => {
+    setLanguage(lang);
+    showLanguageMenu.value = false;
+}
+
+const currentLanguageFlag = computed(() => {
+    return currentLanguage.value === 'pt' 
+        ? '🇧🇷' 
+        : '🇺🇸';
+})
+
+const currentLanguageText = computed(() => {
+    return currentLanguage.value === 'pt' 
+        ? 'PT' 
+        : 'EN';
+})
 
 </script>
 
 <template>
-  <header :class="{'bg-primary-gray/50 dark:bg-gray/50': !isScrolledToTop, 'bg-primary-gray dark:bg-gray': isScrolledToTop}" class="sticky top-0 z-30 w-full border-b border-transparent dark:max-md:border-gray-100 backdrop-blur-xl dark:md:border-gray-100">
-  <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-  <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
-      <!-- <img src="#" class="h-8" alt="Profile Logo" /> -->
-      <span class="text-2xl md:text-3xl tracking-[-0.02em] text-primary-gray-900 dark:text-gray-900 transition-all hover:text-primary-gray-600 dark:hover:text-gray-900 font-bold">&lt;GC /&gt;</span>
+  <header :class="{'bg-white/80 dark:bg-gray-950/80 backdrop-blur-md shadow-sm': !isScrolledToTop, 'bg-white dark:bg-gray-950': isScrolledToTop}" 
+          class="sticky top-0 z-50 w-full border-b border-primary-gray-200/50 dark:border-gray-800 transition-all duration-300 animate-fade-in-down">
+  <div class="max-w-7xl flex flex-wrap items-center justify-between mx-auto px-6 py-4">
+  <a href="#hero" class="flex items-center space-x-2 rtl:space-x-reverse group animate-fade-in">
+      <span class="text-xl md:text-2xl font-bold tracking-tight text-primary-gray-900 dark:text-gray-50 transition-all duration-300 group-hover:text-primary-gray-600 dark:group-hover:text-gray-300 group-hover:scale-110">&lt;GC /&gt;</span>
   </a>
   <div class="hidden w-full md:block md:w-auto" id="navbar-language">
-    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
+    <div class="flex items-center gap-8">
 
-        <ul class="flex flex-col font-medium mt-4 pr-5 rounded-lg  md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-transparent bg-primary-gray-800 dark:bg-gray-800 md:dark:bg-transparent border-primary-gray-700 dark:border-gray-700">
-            <li>
-                <a v-scroll="200" href="#hero" class="text-base font-medium text-primary-gray-900 dark:text-gray-600 transition-all hover:text-primary-gray-600 dark:hover:text-gray-900 active:text-gray-600">Home</a>
+        <ul class="flex items-center gap-6 font-medium">
+            <li class="animate-fade-in-up" style="animation-delay: 0.1s">
+                <a v-scroll="100" href="#hero" class="text-sm text-primary-gray-700 dark:text-gray-300 transition-all duration-300 hover:text-primary-gray-900 dark:hover:text-gray-50 relative group">
+                  <span class="relative z-10">{{ t('nav.home') }}</span>
+                  <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-gray-900 dark:bg-gray-50 transition-all duration-300 group-hover:w-full"></span>
+                </a>
             </li>
-            <li>
-                <a v-scroll="200" href="#skills" class="text-base font-medium text-primary-gray-900 dark:text-gray-600 transition-all hover:text-primary-gray-600 dark:hover:text-gray-900 active:text-gray-600">Tech Stack</a>
+            <li class="animate-fade-in-up" style="animation-delay: 0.2s">
+                <a v-scroll="100" href="#skills" class="text-sm text-primary-gray-700 dark:text-gray-300 transition-all duration-300 hover:text-primary-gray-900 dark:hover:text-gray-50 relative group">
+                  <span class="relative z-10">{{ t('nav.skills') }}</span>
+                  <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-gray-900 dark:bg-gray-50 transition-all duration-300 group-hover:w-full"></span>
+                </a>
             </li>
-            <li>
-                <a v-scroll="200" href="#projects" class="text-base font-medium text-primary-gray-900 dark:text-gray-600 transition-all hover:text-primary-gray-600 dark:hover:text-gray-900 active:text-gray-600">Projects</a>
+            <li class="animate-fade-in-up" style="animation-delay: 0.3s">
+                <a v-scroll="100" href="#projects" class="text-sm text-primary-gray-700 dark:text-gray-300 transition-all duration-300 hover:text-primary-gray-900 dark:hover:text-gray-50 relative group">
+                  <span class="relative z-10">{{ t('nav.projects') }}</span>
+                  <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-gray-900 dark:bg-gray-50 transition-all duration-300 group-hover:w-full"></span>
+                </a>
             </li>
-            <li>
-                <a v-scroll="200" href="#contacts" class="text-base font-medium text-primary-gray-900 dark:text-gray-600 transition-all hover:text-primary-gray-600 dark:hover:text-gray-900 active:text-gray-600">Contact</a>
+            <li class="animate-fade-in-up" style="animation-delay: 0.4s">
+                <a v-scroll="100" href="#contacts" class="text-sm text-primary-gray-700 dark:text-gray-300 transition-all duration-300 hover:text-primary-gray-900 dark:hover:text-gray-50 relative group">
+                  <span class="relative z-10">{{ t('nav.contact') }}</span>
+                  <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-gray-900 dark:bg-gray-50 transition-all duration-300 group-hover:w-full"></span>
+                </a>
             </li>
         </ul>
 
-        <div class="h-6 w-0.5 bg-primary-gray-100 dark:bg-gray-100"></div>
+        <div class="h-6 w-px bg-primary-gray-200 dark:bg-gray-800 animate-fade-in"></div>
 
-        <div class="flex items-center ml-4">
-            <button id="theme-toggle" class="relative flex justify-center items-center hover:bg-primary-gray-100 dark:text-gray-100 dark:hover:bg-gray-100 dark:active:bg-gray-200 rounded-lg p-1.5 transition-colors duration-200 [&amp;_svg]:stroke-gray-600 [&amp;_svg]:hover:stroke-gray-700 [&amp;_svg]:w-6 [&amp;_svg]:h-6">
-                <svg id="theme-toggle-light-icon" class="w-5 h-5 hidden text-gray-50 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>
-               
-            <svg id="theme-toggle-dark-icon" 
-                class="w-5 h-5 hidden text-gray-50 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path><path d="M19 3v4"></path><path d="M21 5h-4"></path></svg>
-            </button>
-            
-            <div class="flex items-center ml-4 md:order-2 space-x-1 md:space-x-0 rtl:space-x-reverse">
-            <button type="button" data-dropdown-toggle="language-dropdown-menu" class="inline-flex items-center font-medium justify-center px-4 py-2 text-sm text-gray-50 dark:text-white rounded-lg cursor-pointer hover:bg-primary-gray-100 dark:hover:bg-gray-100  dark:hover:text-white">
-                <svg class="w-5 h-5 rounded-full me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 3900 3900"><path fill="#b22234" d="M0 0h7410v3900H0z"/><path d="M0 450h7410m0 600H0m0 600h7410m0 600H0m0 600h7410m0 600H0" stroke="#fff" stroke-width="300"/><path fill="#3c3b6e" d="M0 0h2964v2100H0z"/><g fill="#fff"><g id="d"><g id="c"><g id="e"><g id="b"><path id="a" d="M247 90l70.534 217.082-184.66-134.164h228.253L176.466 307.082z"/><use xlink:href="#a" y="420"/><use xlink:href="#a" y="840"/><use xlink:href="#a" y="1260"/></g><use xlink:href="#a" y="1680"/></g><use xlink:href="#b" x="247" y="210"/></g><use xlink:href="#c" x="494"/></g><use xlink:href="#d" x="988"/><use xlink:href="#c" x="1976"/><use xlink:href="#e" x="2470"/></g></svg>
-                English (US)
-            </button>
-            <!-- Dropdown -->
-            <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700" id="language-dropdown-menu">
-                <ul class="py-2 font-medium" role="none">
-                <li>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">
-                    <div class="inline-flex items-center">
-                        <svg aria-hidden="true" class="h-3.5 w-3.5 rounded-full me-2" xmlns="http://www.w3.org/2000/svg" id="flag-icon-css-us" viewBox="0 0 512 512"><g fill-rule="evenodd"><g stroke-width="1pt"><path fill="#bd3d44" d="M0 0h247v10H0zm0 20h247v10H0zm0 20h247v10H0zm0 20h247v10H0zm0 20h247v10H0zm0 20h247v10H0zm0 20h247v10H0z" transform="scale(3.9385)"/><path fill="#fff" d="M0 10h247v10H0zm0 20h247v10H0zm0 20h247v10H0zm0 20h247v10H0zm0 20h247v10H0zm0 20h247v10H0z" transform="scale(3.9385)"/></g><path fill="#192f5d" d="M0 0h98.8v70H0z" transform="scale(3.9385)"/><path fill="#fff" d="M8.2 3l1 2.8H12L9.7 7.5l.9 2.7-2.4-1.7L6 10.2l.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8H45l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.4 0l1 2.8h2.8l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.4 1.7 1 2.7L74 8.5l-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8h2.9L92 7.5l1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm-74.1 7l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.4 0l1 2.8h2.8l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7H65zm16.4 0l1 2.8H86l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm-74 7l.8 2.8h3l-2.4 1.7.9 2.7-2.4-1.7L6 24.2l.9-2.7-2.4-1.7h3zm16.4 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8H45l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.4 0l1 2.8h2.8l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8h2.9L92 21.5l1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm-74.1 7l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.4 0l1 2.8h2.8l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7H65zm16.4 0l1 2.8H86l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm-74 7l.8 2.8h3l-2.4 1.7.9 2.7-2.4-1.7L6 38.2l.9-2.7-2.4-1.7h3zm16.4 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8H45l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.4 0l1 2.8h2.8l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8h2.9L92 35.5l1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm-74.1 7l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.4 0l1 2.8h2.8l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7H65zm16.4 0l1 2.8H86l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm-74 7l.8 2.8h3l-2.4 1.7.9 2.7-2.4-1.7L6 52.2l.9-2.7-2.4-1.7h3zm16.4 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8H45l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.4 0l1 2.8h2.8l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8h2.9L92 49.5l1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm-74.1 7l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.4 0l1 2.8h2.8l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7H65zm16.4 0l1 2.8H86l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm-74 7l.8 2.8h3l-2.4 1.7.9 2.7-2.4-1.7L6 66.2l.9-2.7-2.4-1.7h3zm16.4 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8H45l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.4 0l1 2.8h2.8l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8h2.9L92 63.5l1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9z" transform="scale(3.9385)"/></g></svg>              
-                        English (US)
+        <div class="flex items-center gap-3">
+            <!-- Language Selector -->
+            <div class="relative language-menu-container">
+                <button 
+                    @click.stop="showLanguageMenu = !showLanguageMenu"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-primary-gray-100 dark:hover:bg-gray-800 transition-all duration-200 animate-scale-in hover:scale-105"
+                    style="animation-delay: 0.5s">
+                    <span class="text-lg">{{ currentLanguageFlag }}</span>
+                    <span class="text-sm font-medium text-primary-gray-700 dark:text-gray-300">{{ currentLanguageText }}</span>
+                    <svg class="w-4 h-4 text-primary-gray-500 dark:text-gray-400 transition-transform duration-200" :class="{'rotate-180': showLanguageMenu}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                
+                <Transition name="fade">
+                    <div v-if="showLanguageMenu" 
+                         @click.stop
+                         class="absolute right-0 mt-2 w-32 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-primary-gray-200 dark:border-gray-700 overflow-hidden animate-fade-in-up z-50">
+                        <button 
+                            @click="handleLanguageChange('pt')"
+                            :class="{'bg-primary-gray-100 dark:bg-gray-700': currentLanguage === 'pt'}"
+                            class="w-full flex items-center gap-2 px-4 py-2 text-sm text-primary-gray-700 dark:text-gray-300 hover:bg-primary-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <span>🇧🇷</span>
+                            <span>Português</span>
+                        </button>
+                        <button 
+                            @click="handleLanguageChange('en')"
+                            :class="{'bg-primary-gray-100 dark:bg-gray-700': currentLanguage === 'en'}"
+                            class="w-full flex items-center gap-2 px-4 py-2 text-sm text-primary-gray-700 dark:text-gray-300 hover:bg-primary-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <span>🇺🇸</span>
+                            <span>English</span>
+                        </button>
                     </div>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">
-                    <div class="inline-flex items-center">
-                        <svg class="h-3.5 w-3.5 rounded-full me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" id="flag-icon-css-de" viewBox="0 0 512 512"><path fill="#ffce00" d="M0 341.3h512V512H0z"/><path d="M0 0h512v170.7H0z"/><path fill="#d00" d="M0 170.7h512v170.6H0z"/></svg>
-                        Português
-                    </div>
-                    </a>
-                </li>
-                </ul>
+                </Transition>
             </div>
-            <button data-collapse-toggle="navbar-language" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-language" aria-expanded="false">
-                <span class="sr-only">Open main menu</span>
-                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+
+            <div class="h-6 w-px bg-primary-gray-200 dark:bg-gray-800"></div>
+
+            <!-- Theme Toggle -->
+            <button 
+                @click="handleThemeToggle"
+                id="theme-toggle" 
+                class="relative flex justify-center items-center hover:bg-primary-gray-100 dark:hover:bg-gray-800 rounded-lg p-2 transition-all duration-200 hover:scale-110 animate-scale-in"
+                style="animation-delay: 0.6s">
+                <svg id="theme-toggle-light-icon" 
+                     class="w-5 h-5 text-primary-gray-700 dark:text-gray-300 transition-all duration-300" 
+                     xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <path d="M12 2v2"></path>
+                    <path d="M12 20v2"></path>
+                    <path d="m4.93 4.93 1.41 1.41"></path>
+                    <path d="m17.66 17.66 1.41 1.41"></path>
+                    <path d="M2 12h2"></path>
+                    <path d="M20 12h2"></path>
+                    <path d="m6.34 17.66-1.41 1.41"></path>
+                    <path d="m19.07 4.93-1.41 1.41"></path>
+                </svg>
+                <svg id="theme-toggle-dark-icon" 
+                     class="w-5 h-5 text-primary-gray-700 dark:text-gray-300 transition-all duration-300" 
+                     xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+                    <path d="M19 3v4"></path>
+                    <path d="M21 5h-4"></path>
                 </svg>
             </button>
-            </div>
         </div>
         
 
